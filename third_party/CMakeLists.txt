@@ -1,0 +1,7 @@
+add_subdirectory(eigen)
+if(BUILD_TESTING AND NOT CATKIN_ENABLE_TESTING)
+  option(BUILD_GMOCK "" OFF)
+  option(INSTALL_GTEST "" OFF)
+  add_subdirectory(googletest)
+endif()
+add_subdirectory(glog)
