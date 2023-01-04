@@ -18,7 +18,7 @@ class OptimizerBase {
   OptimizerBase() = default;
   explicit OptimizerBase(int dim) : n(dim) {
     // initialize x with distributed random numbers: [-100, 100]
-    srand(time(NULL));
+    srand(time(nullptr));
     x_ = Eigen::VectorXd::Random(dim);
     x_ = x_.array() * 20 - 10;
   }

@@ -1,14 +1,14 @@
 # encoding: utf-8
 
-## Copyright 2022 Beijing Institute of Technology
-## This script is used to configure the environment for the smurosim project.
+## Copyright 2022 HELLION XIE
+## This script is used to configure the environment for the numerical optimization project.
 ## Usage: ./configure.sh [-h] [-t [all|main|ros]] [-c] [-b [0|1]]
 ## Options:
 ##   -h, --help: print this help message
-##   -t, --test: test the program by executing main_node or/and ros_test
+##   -t, --test: test the program by executing coressponding nodes
 ##        all, execute both test nodes (default)
-##        main, only execute main_node to test non-ros functions
-##        ros, only execute ros_test to test ros-related functions
+##        lsgd, linear search gradient descent
+##        google, run google unit tests
 ##        if the param is left blank, the script will execute both test nodes.
 ##   -c, --clean: clean the build directory
 ##   -b, --build:
@@ -22,7 +22,6 @@ help() {
 
 arg_help="0"
 arg_test_main="0"
-arg_test_ros="0"
 arg_test_google="0"
 arg_clean="0"
 arg_build="1"
@@ -38,31 +37,21 @@ while true; do
     args2=1
     case $2 in
     all)
-      arg_test_ros="1"
       arg_test_main="1"
+      arg_test_google="1"
+      args2=2
+      ;;
+    lsgd)
+      arg_test_main="lsgd"
       arg_test_google="1"
       args2=2
       ;;
     google)
-      arg_test_ros="0"
       arg_test_main="0"
       arg_test_google="1"
       args2=2
       ;;
-    main)
-      arg_test_main="1"
-      arg_test_ros="0"
-      arg_test_google="0"
-      args2=2
-      ;;
-    ros)
-      arg_test_main="0"
-      arg_test_ros="1"
-      arg_test_google="0"
-      args2=2
-      ;;
     "" | -*)
-      arg_test_ros="1"
       arg_test_main="1"
       arg_test_google="0"
       args2=1
@@ -98,8 +87,6 @@ if [ "$arg_help" != "0" ]; then
   exit 1
 fi
 
-. /opt/ros/$ROS_DISTRO/setup.sh
-
 set -ex
 SCRIPT=$(readlink -f "$0")
 SCRIPTPATH=$(dirname "$SCRIPT")
@@ -110,19 +97,7 @@ if [ "$arg_clean" != "0" ]; then
   if [ -d "build" ]; then
     rm -rf build
   fi
-  if [ -f "platform/model/urdf/smuro.convert.urdf" ]; then
-    rm platform/model/urdf/smuro.convert.urdf
-  fi
 fi
-
-# [Deprecated] generate_urdf script calling has been moved into platform/model/urdf/CMakeLists.txt
-# generate urdf file
-# cd $SCRIPTPATH/../platform/model/urdf
-# $SCRIPTPATH/generate_urdf.sh\
-#   -x smuro.urdf.xacro\
-#   -u smuro.convert.urdf\
-#   -a ../config/xacro.config
-# cd $SCRIPTPATH/..
 
 if [ "$arg_build" != "1" ]; then
   exit 0
@@ -136,40 +111,12 @@ cd build
 unit_tests=
 if [ "$arg_test_google" != "0" ]; then
   unit_tests="
-  load_data_file_test
-  string_split_test
-  scoped_temporary_workspace_test
-  yaml_tree_node_test
-  yaml_tree_reader_test
-  yaml_test_utils_test
-  yaml_eigen_conversions_test
-  scoped_parameter_test
-  dynamic_scoped_parameter_test
-  time_test
-  spsc_ring_test
-  triple_buffer_test
-  thread_liveness_flag_test
-  shared_memory_file_topic_test
-  shared_memory_file_simple_topic_test
-  shared_memory_file_spsc_ring_topic_test
-  shared_memory_file_triple_buffer_topic_test
-  cycle_test
-  interpolation_test
-  quartic_spline_pair_test
-  triangle_angles_test
-  quartic_spline_interpolation_test
-  eigen_indexing_test
-  pseudoinverse_test
-  smoothed_axis_joystick_test
   "
 fi
 # build and compile the project
 targets="
   $unit_tests
-  main_node
-  ros_test
-  platform_smuro_gazebo_controller_plugin
-  robotis_math
+  lsgd
 "
 cmake ..
 make -j $(nproc) $targets
@@ -183,8 +130,5 @@ if [ "$arg_test_google" != "0" ]; then
   cd $PROJECT_ROOT
 fi
 if [ "$arg_test_main" != "0" ]; then
-  $PROJECT_ROOT/build/platform/func_test/main_node $SCRIPTPATH/../platform/model/urdf/smuro.convert.urdf
-fi
-if [ "$arg_test_ros" != "0" ]; then
-  $PROJECT_ROOT/build/platform/ros_test/ros_test
+  $PROJECT_ROOT/build/lsgd/lsgd
 fi

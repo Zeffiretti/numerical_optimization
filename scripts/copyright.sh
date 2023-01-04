@@ -1,5 +1,5 @@
 #!/bin/bash
-# the following command will replace copyright institute from Tencent to BIT
+# the following command will replace copyright information
 # set -ex
 SCRIPT=$(readlink -f "$0")
 SCRIPTPATH=$(dirname "$SCRIPT")

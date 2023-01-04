@@ -1,5 +1,5 @@
 #!/bin/bash
-## Copyright 2022 Beijing Institute of Technology
+## Copyright 2022 HELLION XIE
 
 SCRIPT=$(readlink -f "$0")
 SCRIPTPATH=$(dirname "$SCRIPT")
