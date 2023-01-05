@@ -20,6 +20,10 @@ void ArmijoOptimizer::optimize() {
     x = x - options_.t * delta;
     delta = g(x, n);
     iter++;
+    if (iter % 10000 == 0) {
+      log(x, f(x, n), delta, iter, options_.t, options_.c, options_.sigma);
+      std::cout << "Current point: " << x.transpose() << std::endl;
+    }
   }
   std::cout << "Final point: " << x.transpose() << std::endl;
   std::cout << "Final value: " << f(x, n) << std::endl;

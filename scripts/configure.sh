@@ -97,6 +97,9 @@ if [ "$arg_clean" != "0" ]; then
   if [ -d "build" ]; then
     rm -rf build
   fi
+  if [ -d "data" ]; then
+    rm -rf data
+  fi
 fi
 
 if [ "$arg_build" != "1" ]; then
@@ -130,5 +133,5 @@ if [ "$arg_test_google" != "0" ]; then
   cd $PROJECT_ROOT
 fi
 if [ "$arg_test_main" != "0" ]; then
-  $PROJECT_ROOT/build/lsgd/lsgd
+  $SCRIPTPATH/test.sh
 fi

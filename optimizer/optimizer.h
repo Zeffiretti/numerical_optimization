@@ -2,7 +2,9 @@
 #ifndef OPTIMIZER_OPTIMIZER_H_
 #define OPTIMIZER_OPTIMIZER_H_
 
+#include <bits/types/FILE.h>
 #include <cstdlib>
+#include <ostream>
 
 #include "third_party/eigen/Eigen/Dense"
 #include "third_party/eigen/Eigen/src/Core/Matrix.h"
@@ -20,15 +22,21 @@ class OptimizerBase {
     // initialize x with distributed random numbers: [-100, 100]
     srand(time(nullptr));
     x_ = Eigen::VectorXd::Random(dim);
-    x_ = x_.array() * 20 - 10;
+    x_ = x_.array() * 50;
   }
-  virtual ~OptimizerBase() = default;
+  virtual ~OptimizerBase();
 
   virtual void optimize() = 0;
   void setOptimizerOption(const OptimizerOptions& option) { options_ = option; }
   void setObjectiveFunction(double (*f_)(const Eigen::VectorXd& x, size_t n)) { f = f_; }
   void setGradientFunction(Eigen::VectorXd (*g_)(const Eigen::VectorXd& x, size_t n)) { g = g_; }
   void setInitialPoint(const Eigen::VectorXd& x) { x_ = x; }
+
+  void setLogPath(const char* path) {
+    log_path = const_cast<char*>(path);
+    fp = fopen(log_path, "w");
+  }
+  void log(const Eigen::VectorXd& x, double f, const Eigen::VectorXd& g, int iter, double t, double c, double sigma);
 
  protected:
   OptimizerOptions options_;
@@ -38,6 +46,10 @@ class OptimizerBase {
   double (*f)(const Eigen::VectorXd& x, size_t n);
   // gradient function instance
   Eigen::VectorXd (*g)(const Eigen::VectorXd& x, size_t n);
+
+ private:
+  char* log_path = nullptr;
+  FILE* fp = nullptr;
 };
 
 #endif  // OPTIMIZER_OPTIMIZER_H_

@@ -2,6 +2,7 @@
 .idea/
 .cache/
 build/
+data/
 __pycache__/
 
 Change.log

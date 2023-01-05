@@ -25,10 +25,27 @@ Eigen::VectorXd gradient(const Eigen::VectorXd& x, size_t n) {
   return diff;
 }
 
+// main function
+// argv[1]: string, log file path prefix
+// argv[2]: int, dimension of the problem, default 100
 int main(int argc, char* argv[]) {
   int n = 100;
-  if (argc == 2) {
-    n = atoi(argv[1]);
+  char* log_path = nullptr;
+  if (argc > 1) {
+    log_path = argv[1];
+  }
+  // if log path does not end with .log, add .log suffix
+  if (log_path != nullptr) {
+    size_t len = strlen(log_path);
+    if (len < 4 || strcmp(log_path + len - 4, ".log") != 0) {
+      char* new_log_path = new char[len + 5];
+      strcpy(new_log_path, log_path);
+      strcat(new_log_path, ".log");
+      log_path = new_log_path;
+    }
+  }
+  if (argc > 2) {
+    n = atoi(argv[2]);
   }
   ArmijoOptimizer optim(n);
   optim.setObjectiveFunction(rosenbrock);
@@ -36,10 +53,13 @@ int main(int argc, char* argv[]) {
   OptimizerOptions options;
   options.t = 1.0;
   options.c = 1e-4;
-  options.sigma = 1e-5;
+  options.sigma = 1e-4;
   optim.setOptimizerOption(options);
-  Eigen::VectorXd x = Eigen::VectorXd::Ones(n) * 10;  // start from (10, 10, ..., 10)
-  optim.setInitialPoint(x);
+  // Eigen::VectorXd x = Eigen::VectorXd::Ones(n) * 10;  // start from (10, 10, ..., 10)
+  // optim.setInitialPoint(x);
+  if (log_path != nullptr) {
+    optim.setLogPath(log_path);
+  }
   optim.optimize();
   return 0;
 }
