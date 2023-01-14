@@ -6,13 +6,18 @@ timestamp=$(date "+%Y-%m-%d-%H-%M-%S")
 SCRIPT=$(readlink -f "$0")
 SCRIPTPATH=$(dirname "$SCRIPT")
 PROJECT_ROOT=$SCRIPTPATH/..
+test_node=$1
 
 cd $PROJECT_ROOT
-# 检查data目录是否存在，不存在则创建
 if [ ! -d "data" ]; then
   mkdir data
 fi
 
-log_file="$PROJECT_ROOT/data/$timestamp.log"
-$PROJECT_ROOT/build/lsgd/lsgd $log_file 2
-python $PROJECT_ROOT/scripts/paint.py $log_file
+cd data
+if [ ! -d "$test_node" ]; then
+  mkdir $test_node
+fi
+cd $PROJECT_ROOT
+log_file="$PROJECT_ROOT/data/$test_node/$timestamp.log"
+$PROJECT_ROOT/build/$test_node/$test_node $log_file 2
+python3 $PROJECT_ROOT/scripts/paint.py $log_file

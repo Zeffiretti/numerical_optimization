@@ -2,7 +2,7 @@
 #include <cstddef>
 #include <iostream>
 
-#include "optimizer/armijo_optimizer.h"
+#include "optimizer/lbfgs.h"
 #include "optimizer/optimizer.h"
 #include "third_party/eigen/Eigen/Dense"
 
@@ -49,7 +49,7 @@ int main(int argc, char* argv[]) {
   if (argc > 2) {
     n = atoi(argv[2]);
   }
-  ArmijoOptimizer optim(n);
+  LBFGSOptimizer optim(n);
   optim.setObjectiveFunction(rosenbrock);
   optim.setGradientFunction(gradient);
   OptimizerOptions options;

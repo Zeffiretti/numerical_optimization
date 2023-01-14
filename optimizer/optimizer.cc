@@ -25,5 +25,6 @@ void OptimizerBase::log(const Eigen::VectorXd& x, double f, const Eigen::VectorX
 OptimizerBase::~OptimizerBase() {
   if (fp != nullptr) {
     fclose(fp);
+    printf("file has been saved to %s\n", log_path);
   }
 }

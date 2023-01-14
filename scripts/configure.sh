@@ -21,7 +21,8 @@ help() {
 }
 
 arg_help="0"
-arg_test_main="0"
+arg_test_lsgd="0"
+arg_test_bfgs="0"
 arg_test_google="0"
 arg_clean="0"
 arg_build="1"
@@ -37,22 +38,26 @@ while true; do
     args2=1
     case $2 in
     all)
-      arg_test_main="1"
+      arg_test_lsgd="1"
+      arg_test_bfgs="1"
       arg_test_google="1"
       args2=2
       ;;
     lsgd)
-      arg_test_main="lsgd"
-      arg_test_google="1"
+      arg_test_lsgd="1"
+      arg_test_google="0"
+      args2=2
+      ;;
+    bfgs)
+      arg_test_bfgs="1"
+      arg_test_google="0"
       args2=2
       ;;
     google)
-      arg_test_main="0"
       arg_test_google="1"
       args2=2
       ;;
     "" | -*)
-      arg_test_main="1"
       arg_test_google="0"
       args2=1
       ;;
@@ -111,7 +116,8 @@ if [ ! -d "build" ]; then
 fi
 cd build
 
-unit_tests=
+unit_tests="
+"
 if [ "$arg_test_google" != "0" ]; then
   unit_tests="
   "
@@ -120,6 +126,7 @@ fi
 targets="
   $unit_tests
   lsgd
+  bfgs
 "
 cmake ..
 make -j $(nproc) $targets
@@ -132,6 +139,9 @@ if [ "$arg_test_google" != "0" ]; then
   make test
   cd $PROJECT_ROOT
 fi
-if [ "$arg_test_main" != "0" ]; then
-  $SCRIPTPATH/test.sh
+if [ "$arg_test_lsgd" != "0" ]; then
+  $SCRIPTPATH/test.sh lsgd
+fi
+if [ "$arg_test_bfgs" != "0" ]; then
+  $SCRIPTPATH/test.sh bfgs
 fi

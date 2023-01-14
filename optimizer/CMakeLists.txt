@@ -4,6 +4,8 @@ add_library(optimizer STATIC
   optimizer.h
   armijo_optimizer.cc
   armijo_optimizer.h
+  lbfgs.cc
+  lbfgs.h
 )
 target_link_libraries(optimizer
   PUBLIC

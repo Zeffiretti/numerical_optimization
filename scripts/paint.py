@@ -47,6 +47,8 @@ def paint(data, file_prefix):
     ax[0, 0].set_ylabel("x2")
     ax[0, 1].plot(data["iter"], data["f"], "r-")
     ax[0, 1].set_title("iter-f")
+    # ylim: [0, 20]
+    ax[0, 1].set_ylim(0, 20)
     ax[0, 1].set_xlabel("iter")
     ax[0, 1].set_ylabel("f")
     ax[1, 0].plot(data["iter"], data["g1"], "r-")

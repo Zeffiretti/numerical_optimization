@@ -28,8 +28,8 @@ class OptimizerBase {
 
   virtual void optimize() = 0;
   void setOptimizerOption(const OptimizerOptions& option) { options_ = option; }
-  void setObjectiveFunction(double (*f_)(const Eigen::VectorXd& x, size_t n)) { f = f_; }
-  void setGradientFunction(Eigen::VectorXd (*g_)(const Eigen::VectorXd& x, size_t n)) { g = g_; }
+  void setObjectiveFunction(double (*f_)(const Eigen::VectorXd& x)) { f = f_; }
+  void setGradientFunction(Eigen::VectorXd (*g_)(const Eigen::VectorXd& x)) { g = g_; }
   void setInitialPoint(const Eigen::VectorXd& x) { x_ = x; }
 
   void setLogPath(const char* path) {
@@ -43,9 +43,9 @@ class OptimizerBase {
   Eigen::VectorXd x_;
   int n = 0;
   // objective function instance
-  double (*f)(const Eigen::VectorXd& x, size_t n);
+  double (*f)(const Eigen::VectorXd& x);
   // gradient function instance
-  Eigen::VectorXd (*g)(const Eigen::VectorXd& x, size_t n);
+  Eigen::VectorXd (*g)(const Eigen::VectorXd& x);
 
  private:
   char* log_path = nullptr;

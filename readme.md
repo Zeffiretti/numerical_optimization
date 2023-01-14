@@ -21,4 +21,4 @@ For example, to run the program with a 10-dimensional problem, you can run the f
 ./build/lsgd/lsgd ./build/lsgd/log.txt 10
 ```
 
-The test case of dimension 2 is provided in `scripts/test.sh`. It will be called in `scripts/configure.sh`, write results in `data/yyyy-mm-dd-hh-mm-ss.log`, and plot the result in `data/yyyy-mm-dd-hh-mm-ss.png`.
+The test case of dimension 2 is provided in `scripts/test.sh`. It will be called in `scripts/configure.sh`, write results in `data/lsgd/yyyy-mm-dd-hh-mm-ss.log`, and plot the result in `data/lsgd/yyyy-mm-dd-hh-mm-ss.png`.
