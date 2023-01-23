@@ -31,20 +31,27 @@
 
 #include <stdlib.h>
 
+
 //////////////////////////////////////////////////////////////////////////
 //////                       GLFW platform API                      //////
 //////////////////////////////////////////////////////////////////////////
 
-int _glfwPlatformInit(void) {
-  _glfwInitTimerPOSIX();
-  _glfwPollMonitorsNull();
+int _glfwPlatformInit(void)
+{
+    _glfwInitTimerPOSIX();
+    _glfwPollMonitorsNull();
 
-  return GLFW_TRUE;
+    return GLFW_TRUE;
 }
 
-void _glfwPlatformTerminate(void) {
-  free(_glfw.null.clipboardString);
-  _glfwTerminateOSMesa();
+void _glfwPlatformTerminate(void)
+{
+    free(_glfw.null.clipboardString);
+    _glfwTerminateOSMesa();
 }
 
-const char* _glfwPlatformGetVersionString(void) { return _GLFW_VERSION_NUMBER " null OSMesa"; }
+const char* _glfwPlatformGetVersionString(void)
+{
+    return _GLFW_VERSION_NUMBER " null OSMesa";
+}
+

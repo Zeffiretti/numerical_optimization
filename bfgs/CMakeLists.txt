@@ -1,5 +1,5 @@
 # Copyright 2023 HELLION XIE. All rights reserved.
-add_executable(bfgs main.cc)
+add_executable(bfgs bfgs_rosenbrock.cc)
 target_link_libraries(bfgs
   PUBLIC
     eigen

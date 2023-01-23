@@ -11,6 +11,10 @@
 #include "math/cubic_spline.h"
 #include "math/cubic_splines.h"
 
+namespace raylib {
+#include "third_party/raylib/src/raylib.h"
+}
+
 const int kWindowWidth = 1000;
 const int kWindowHeight = 1000;
 

@@ -127,7 +127,7 @@ targets="
   lsgd
   $unit_tests
   bfgs
-  path_smoother
+  path_smoother_node
 "
 cmake ..
 make -j $(nproc) $targets
@@ -145,4 +145,8 @@ if [ "$arg_test_lsgd" != "0" ]; then
 fi
 if [ "$arg_test_bfgs" != "0" ]; then
   $SCRIPTPATH/test.sh bfgs
+  # if the machine is not wsl, run the path_smoother_node
+  if [ -z "$WSL_DISTRO_NAME" ]; then
+    $PROJECT_ROOT/build/bfgs/path_smoother_node
+  fi
 fi

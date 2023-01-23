@@ -60,7 +60,10 @@ void LBFGSOptimizer::optimize() {
     Eigen::VectorXd s = t * d;
     Eigen::VectorXd y = delta_new - delta;
     delta = delta_new;
-    double rho = 1 / (s.transpose() * y);
+    double rho = 1 / ((s.transpose() * y));
+    if (std::isnan(rho)) {
+      rho = 1e6;
+    }
     // update S, Y and RHO vectors, ensuring that the size of these vectors is no larger than m
     if (S.size() < m) {
       S.push_back(s);
@@ -86,7 +89,7 @@ void LBFGSOptimizer::optimize() {
       q = q - Alpha[i] * Y[i];
     }
     auto gamma = static_cast<double>(S[S.size() - 1].transpose() * Y[S.size() - 1]) /
-                 static_cast<double>(Y[S.size() - 1].transpose() * Y[S.size() - 1]);
+                 (static_cast<double>(Y[S.size() - 1].transpose() * Y[S.size() - 1]) + 1e-6);
     Eigen::MatrixXd H0 = gamma * Eigen::MatrixXd::Identity(n, n);
     Eigen::VectorXd z = H0 * q;
     for (int i = 0; i < S.size(); ++i) {

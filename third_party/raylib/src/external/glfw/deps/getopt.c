@@ -58,19 +58,23 @@ int getopt(int argc, char* const argv[], const char* optstring) {
   optopt = 0;
 
   /* Unspecified, but we need it to avoid overrunning the argv bounds. */
-  if (optind >= argc) goto no_more_optchars;
+  if (optind >= argc)
+    goto no_more_optchars;
 
   /* If, when getopt() is called argv[optind] is a null pointer, getopt()
      shall return -1 without changing optind. */
-  if (argv[optind] == NULL) goto no_more_optchars;
+  if (argv[optind] == NULL)
+    goto no_more_optchars;
 
   /* If, when getopt() is called *argv[optind]  is not the character '-',
      getopt() shall return -1 without changing optind. */
-  if (*argv[optind] != '-') goto no_more_optchars;
+  if (*argv[optind] != '-')
+    goto no_more_optchars;
 
   /* If, when getopt() is called argv[optind] points to the string "-",
      getopt() shall return -1 without changing optind. */
-  if (strcmp(argv[optind], "-") == 0) goto no_more_optchars;
+  if (strcmp(argv[optind], "-") == 0)
+    goto no_more_optchars;
 
   /* If, when getopt() is called argv[optind] points to the string "--",
      getopt() shall return -1 after incrementing optind. */
@@ -79,7 +83,8 @@ int getopt(int argc, char* const argv[], const char* optstring) {
     goto no_more_optchars;
   }
 
-  if (optcursor == NULL || *optcursor == '\0') optcursor = argv[optind] + 1;
+  if (optcursor == NULL || *optcursor == '\0')
+    optcursor = argv[optind] + 1;
 
   optchar = *optcursor;
 
@@ -136,7 +141,8 @@ int getopt(int argc, char* const argv[], const char* optstring) {
     optchar = '?';
   }
 
-  if (optcursor == NULL || *++optcursor == '\0') ++optind;
+  if (optcursor == NULL || *++optcursor == '\0')
+    ++optind;
 
   return optchar;
 
@@ -149,7 +155,8 @@ no_more_optchars:
 
 [1] http://www.kernel.org/doc/man-pages/online/pages/man3/getopt.3.html
 */
-int getopt_long(int argc, char* const argv[], const char* optstring, const struct option* longopts, int* longindex) {
+int getopt_long(int argc, char* const argv[], const char* optstring,
+  const struct option* longopts, int* longindex) {
   const struct option* o = longopts;
   const struct option* match = NULL;
   int num_matches = 0;
@@ -160,9 +167,11 @@ int getopt_long(int argc, char* const argv[], const char* optstring, const struc
   optarg = NULL;
   optopt = 0;
 
-  if (optind >= argc) return -1;
+  if (optind >= argc)
+    return -1;
 
-  if (strlen(argv[optind]) < 3 || strncmp(argv[optind], "--", 2) != 0) return getopt(argc, argv, optstring);
+  if (strlen(argv[optind]) < 3 || strncmp(argv[optind], "--", 2) != 0)
+    return getopt(argc, argv, optstring);
 
   /* It's an option; starts with -- and is longer than two chars. */
   current_argument = argv[optind] + 2;
@@ -177,19 +186,22 @@ int getopt_long(int argc, char* const argv[], const char* optstring, const struc
   if (num_matches == 1) {
     /* If longindex is not NULL, it points to a variable which is set to the
        index of the long option relative to longopts. */
-    if (longindex) *longindex = (int)(match - longopts);
+    if (longindex)
+      *longindex = (int) (match - longopts);
 
     /* If flag is NULL, then getopt_long() shall return val.
        Otherwise, getopt_long() returns 0, and flag shall point to a variable
        which shall be set to val if the option is found, but left unchanged if
        the option is not found. */
-    if (match->flag) *(match->flag) = match->val;
+    if (match->flag)
+      *(match->flag) = match->val;
 
     retval = match->flag ? 0 : match->val;
 
     if (match->has_arg != no_argument) {
       optarg = strchr(argv[optind], '=');
-      if (optarg != NULL) ++optarg;
+      if (optarg != NULL)
+        ++optarg;
 
       if (match->has_arg == required_argument) {
         /* Only scan the next argv for required arguments. Behavior is not
@@ -198,7 +210,8 @@ int getopt_long(int argc, char* const argv[], const char* optstring, const struc
           optarg = argv[optind];
         }
 
-        if (optarg == NULL) retval = ':';
+        if (optarg == NULL)
+          retval = ':';
       }
     } else if (strchr(argv[optind], '=')) {
       /* An argument was provided to a non-argument option.

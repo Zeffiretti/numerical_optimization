@@ -26,5 +26,8 @@ fi
 cd $SCRIPTPATH/..
 $SCRIPTPATH/copyright.sh
 echo "executing: format code"
-find . -regex '.*\.\(cpp\|hpp\|cu\|c\|h\|cc\)' -exec clang-format -style=file -i {} \;
+source_file_list=$(find . -regex '.*\.\(cpp\|hpp\|cu\|c\|h\|cc\)')
+# exclude third_party
+source_file_list=$(echo "$source_file_list" | grep -v third_party)
+clang-format -i -style=file $source_file_list
 $SCRIPTPATH/static_check.sh
