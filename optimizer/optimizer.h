@@ -2,8 +2,10 @@
 #ifndef OPTIMIZER_OPTIMIZER_H_
 #define OPTIMIZER_OPTIMIZER_H_
 
-#include <bits/types/FILE.h>
+#include <stdio.h>
+
 #include <cstdlib>
+#include <functional>
 #include <ostream>
 
 #include "third_party/eigen/Eigen/Dense"
@@ -29,8 +31,11 @@ class OptimizerBase {
   virtual void optimize() = 0;
   void setOptimizerOption(const OptimizerOptions& option) { options_ = option; }
   void setObjectiveFunction(double (*f_)(const Eigen::VectorXd& x)) { f = f_; }
+  void setObjectiveFunction(std::function<double(const Eigen::VectorXd& x)> f_) { f = f_; }
   void setGradientFunction(Eigen::VectorXd (*g_)(const Eigen::VectorXd& x)) { g = g_; }
+  void setGradientFunction(std::function<Eigen::VectorXd(const Eigen::VectorXd& x)> g_) { g = g_; }
   void setInitialPoint(const Eigen::VectorXd& x) { x_ = x; }
+  void getOptimalPoint(Eigen::VectorXd* x) { *x = x_; }
 
   void setLogPath(const char* path) {
     log_path = const_cast<char*>(path);
@@ -43,9 +48,14 @@ class OptimizerBase {
   Eigen::VectorXd x_;
   int n = 0;
   // objective function instance
-  double (*f)(const Eigen::VectorXd& x);
+  // double (*f)(const Eigen::VectorXd& x);
   // gradient function instance
-  Eigen::VectorXd (*g)(const Eigen::VectorXd& x);
+  // Eigen::VectorXd (*g)(const Eigen::VectorXd& x);
+
+  // funciton pointer to objective function
+  std::function<double(const Eigen::VectorXd& x)> f;
+  // function pointer to gradient function
+  std::function<Eigen::VectorXd(const Eigen::VectorXd& x)> g;
 
  private:
   char* log_path = nullptr;

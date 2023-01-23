@@ -39,6 +39,7 @@ endif()
 list(APPEND OPTIM_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR})
 set(OPTIM_ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
+add_subdirectory(math)
 add_subdirectory(third_party)
 add_subdirectory(optimizer)
 add_subdirectory(lsgd)

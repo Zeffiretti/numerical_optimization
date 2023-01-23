@@ -7,7 +7,8 @@
 #include <iostream>
 #include <queue>
 #include <vector>
-#include "third_party/eigen/Eigen/src/Core/Matrix.h"
+
+#include "third_party/eigen/Eigen/Eigen"
 
 void LBFGSOptimizer::updateHessian(const Eigen::VectorXd& s, const Eigen::VectorXd& y) {
   Eigen::MatrixXd I = Eigen::MatrixXd::Identity(n, n);
@@ -18,7 +19,6 @@ void LBFGSOptimizer::updateHessian(const Eigen::VectorXd& s, const Eigen::Vector
 
 void LBFGSOptimizer::optimize() {
   Eigen::VectorXd x = x_;
-  std::cout << "Initial point: " << x.transpose() << std::endl;
   auto delta = g(x);
   double sigma_square = options_.sigma * options_.sigma;
   size_t iter = 0;
@@ -33,14 +33,14 @@ void LBFGSOptimizer::optimize() {
   std::vector<double> RHO;
   RHO.clear();
 
-  while (delta.transpose() * delta > sigma_square) {
+  while (!d.hasNaN() && delta.transpose() * delta > sigma_square) {
     // update t using Lewis Overton line search: weak Wolfe conditions
     t = options_.t;
     double lower_bound = 0, upper_bound = INFINITY;
-    while (true) {
-      if (f(x) - f(x + t * d) < -c1 * t * d.transpose() * delta) {  // if S(alpha) condition fails
+    for (int i = 0; i < 50; ++i) {
+      if (f(x) - f(x + t * d) < -c1 * t * d.transpose() * delta) {  // if S(t) condition fails
         upper_bound = t;
-      } else if (d.transpose() * g(x + t * d) < c2 * d.transpose() * delta) {  // if C(alpha) condition fails
+      } else if (d.transpose() * g(x + t * d) < c2 * d.transpose() * delta) {  // if C(t) condition fails
         lower_bound = t;
       } else {  // if both conditions hold, then we find a good t
         break;
@@ -79,37 +79,37 @@ void LBFGSOptimizer::optimize() {
     // Method 1
     // Here we use the formula in wikipedia: https://en.wikipedia.org/wiki/Limited-memory_BFGS,
     // which is different from the formula present in the course slides.
-    // auto q = delta_new;
+    auto q = delta;
     // limited-memory BFGS update, do not store B explicitly
-    // for (int i = S.size() - 1; i >= 0; --i) {
-    //   Alpha[i] = RHO[i] * S[i].transpose() * q;
-    //   q = q - Alpha[i] * Y[i];
-    // }
-    // auto gamma = static_cast<double>(S[S.size() - 1].transpose() * Y[S.size() - 1]) /
-    //              static_cast<double>(Y[S.size() - 1].transpose() * Y[S.size() - 1]);
-    // Eigen::MatrixXd H0 = gamma * Eigen::MatrixXd::Identity(n, n);
-    // Eigen::VectorXd z = H0 * q;
-    // for (int i = 0; i < S.size(); ++i) {
-    //   auto beta = RHO[i] * Y[i].transpose() * z;
-    //   z = z + S[i] * (Alpha[i] - beta);
-    // }
-    // d = -z;
+    for (int i = S.size() - 1; i >= 0; --i) {
+      Alpha[i] = RHO[i] * S[i].transpose() * q;
+      q = q - Alpha[i] * Y[i];
+    }
+    auto gamma = static_cast<double>(S[S.size() - 1].transpose() * Y[S.size() - 1]) /
+                 static_cast<double>(Y[S.size() - 1].transpose() * Y[S.size() - 1]);
+    Eigen::MatrixXd H0 = gamma * Eigen::MatrixXd::Identity(n, n);
+    Eigen::VectorXd z = H0 * q;
+    for (int i = 0; i < S.size(); ++i) {
+      auto beta = RHO[i] * Y[i].transpose() * z;
+      z = z + S[i] * (Alpha[i] - beta);
+    }
+    d = -z;
 
     // Method 2
     // Here we use the formula in the course slides, which does not store
     // B explicitly.
-    d = delta;
-    for (int i = 0; i < S.size(); ++i) {
-      double alpha = RHO[i] * S[i].transpose() * d;
-      d = d - alpha * Y[i];
-    }
-    double gamma = RHO[RHO.size() - 1] * Y[Y.size() - 1].transpose() * Y[Y.size() - 1];
-    d = d / gamma;
-    for (int i = S.size() - 1; i >= 0; --i) {
-      double beta = RHO[i] * Y[i].transpose() * d;
-      d = d + S[i] * (Alpha[i] - beta);
-    }
-    d = -d;
+    // d = delta;
+    // for (int i = 0; i < S.size(); ++i) {
+    //   double alpha = RHO[i] * S[i].transpose() * d;
+    //   d = d - alpha * Y[i];
+    // }
+    // double gamma = RHO[RHO.size() - 1] * Y[Y.size() - 1].transpose() * Y[Y.size() - 1];
+    // d = d / gamma;
+    // for (int i = S.size() - 1; i >= 0; --i) {
+    //   double beta = RHO[i] * Y[i].transpose() * d;
+    //   d = d + S[i] * (Alpha[i] - beta);
+    // }
+    // d = -d;
 
     // Method 3
     // Here we calculate B explicitly, and then use the formula in the course slides.
@@ -117,10 +117,11 @@ void LBFGSOptimizer::optimize() {
     // for (int i = 0; i < S.size(); ++i) {
     //   updateHessian(S[i], Y[i]);
     // }
-    // update delta
+    // // update delta
     // d = -B * delta;
     log(x, f(x), delta, iter, options_.t, options_.c, options_.sigma);
-    std::cout << "Current point: " << x.transpose() << std::endl;
+    // std::cout << "Current point: " << x.transpose() << std::endl;
     iter++;
   }
+  x_ = x;
 }

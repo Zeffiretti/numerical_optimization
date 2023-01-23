@@ -63,5 +63,8 @@ int main(int argc, char* argv[]) {
     optim.setLogPath(log_path);
   }
   optim.optimize();
+  Eigen::VectorXd x;
+  optim.getOptimalPoint(&x);
+  std::cout << "Optimal point: " << x.transpose() << std::endl;
   return 0;
 }

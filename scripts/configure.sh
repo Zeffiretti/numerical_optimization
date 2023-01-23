@@ -124,9 +124,10 @@ if [ "$arg_test_google" != "0" ]; then
 fi
 # build and compile the project
 targets="
-  $unit_tests
   lsgd
+  $unit_tests
   bfgs
+  path_smoother
 "
 cmake ..
 make -j $(nproc) $targets
