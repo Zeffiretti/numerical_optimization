@@ -8,6 +8,7 @@
 #include <vector>
 
 #include "third_party/eigen/Eigen/Eigen"
+
 namespace optim_math {
 class CubicPolynomial {
  private:

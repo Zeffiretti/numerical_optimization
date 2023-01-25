@@ -7,9 +7,7 @@
 
 #include "bfgs/path_smoother/path_smoother.h"
 #include "bfgs/visualizer/map.h"
-#include "math/cubic_curve.h"
 #include "math/cubic_spline.h"
-#include "math/cubic_splines.h"
 
 namespace raylib {
 #include "third_party/raylib/src/raylib.h"
@@ -23,7 +21,7 @@ void logic(TwoDMap& map, PathSmoother& smoother) {
   while (!map.isClosed()) {
     // listen to mouse click
     if (raylib::IsMouseButtonPressed(raylib::MOUSE_LEFT_BUTTON)) {
-      Eigen::Vector2d point(raylib::GetMouseX(), raylib::GetMouseY());
+      Eigen::Vector2d const point(raylib::GetMouseX(), raylib::GetMouseY());
       map.addMarker(point);
       num_point++;
       if (num_point == 1) {
@@ -34,26 +32,24 @@ void logic(TwoDMap& map, PathSmoother& smoother) {
         smoother.setTerminalPoint(point);
         map.addMarker(smoother.getInitailPoint(), Eigen::Vector3d(0, 0, 255));
         map.addMarker(smoother.getTerminalPoint(), Eigen::Vector3d(0, 0, 255));
-        Eigen::MatrixXd x_smooth;
-        Eigen::MatrixXd x;
-        std::cout << "Path finding..." << std::endl;
-        smoother.smooth(x, &x_smooth);
-        std::cout << "Path found!" << std::endl;
-        auto path = smoother.getOptimal();
-        // std::cout << "path: " << path << std::endl;
 
-        // map.addMarkers(x_smooth * 1000, Eigen::Vector3d(255, 0, 0));
+        std::cout << "Path finding..." << std::endl;
+        smoother.smooth();
+        std::cout << "Path found!" << std::endl;
+
+        auto path = smoother.getOptimal();
         map.addMarkers(path, Eigen::Vector3d(0, 255, 0));
 
         num_point = 0;
       }
+      // sleep 0.1s here to avoid continuous clicks
       std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
     std::this_thread::sleep_for(std::chrono::milliseconds(10));
   }
 }
 
-int main(int argc, char* argv[]) {
+int main(int /*argc*/, char* /*argv*/[]) {
   TwoDMap map(kWindowWidth, kWindowHeight);
   PathSmoother smoother(50);
   smoother.setObstacles(map.getObstacles());

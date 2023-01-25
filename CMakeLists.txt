@@ -14,19 +14,12 @@ include(CxxOptions)
 
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Release" CACHE STRING "" FORCE)
+  message(STATUS "CMAKE_BUILD_TYPE set to ${CMAKE_BUILD_TYPE}")
 endif()
-
-# Reduces build size while retaining basic debug info.
-add_compile_options(-ggdb1)
 
 # Required for Eigen alignment fix
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_EXTENSIONS OFF)
-
-set(TARGET_ARCH "skylake" CACHE STRING "Target architecture")
-if(TARGET_ARCH)
-  add_compile_options(-march=${TARGET_ARCH} -mtune=${TARGET_ARCH})
-endif()
 
 # For VS Code integration
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -39,8 +32,8 @@ endif()
 list(APPEND OPTIM_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR})
 set(OPTIM_ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
-add_subdirectory(math)
 add_subdirectory(third_party)
+add_subdirectory(math)
 add_subdirectory(optimizer)
 add_subdirectory(lsgd)
 add_subdirectory(bfgs)

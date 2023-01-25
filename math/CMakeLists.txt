@@ -1,9 +1,8 @@
 # Copyright 2023 HELLION XIE. All rights reserved.
 add_library(optim_math STATIC
-  cubic_spline.h
   cubic_spline.cc
+  cubic_spline.h
   cubic_curve.h
-  cubic_splines.h
 )
 target_link_libraries(optim_math
   PUBLIC

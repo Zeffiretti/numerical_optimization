@@ -2,14 +2,15 @@
 
 ## Copyright 2022 HELLION XIE
 ## This script is used to configure the environment for the numerical optimization project.
-## Usage: ./configure.sh [-h] [-t [all|main|ros]] [-c] [-b [0|1]]
+## Usage: ./configure.sh [-h] [-t [all|...]] [-c] [-b [0|1]]
 ## Options:
 ##   -h, --help: print this help message
 ##   -t, --test: test the program by executing coressponding nodes
 ##        all, execute both test nodes (default)
 ##        lsgd, linear search gradient descent
+##        bfgs, limited-memory bfgs method on rosenbrock function and path smoothing
 ##        google, run google unit tests
-##        if the param is left blank, the script will execute both test nodes.
+##        if the param is left blank, the script will execute all test nodes.
 ##   -c, --clean: clean the build directory
 ##   -b, --build:
 ##        1, build the project (default)

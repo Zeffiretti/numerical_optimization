@@ -31,31 +31,29 @@ class OptimizerBase {
   virtual void optimize() = 0;
   void setOptimizerOption(const OptimizerOptions& option) { options_ = option; }
   void setObjectiveFunction(double (*f_)(const Eigen::VectorXd& x)) { f = f_; }
-  void setObjectiveFunction(std::function<double(const Eigen::VectorXd& x)> f_) { f = f_; }
+  void setObjectiveFunction(std::function<double(const Eigen::VectorXd& x)> f_) { f = std::move(f_); }
   void setGradientFunction(Eigen::VectorXd (*g_)(const Eigen::VectorXd& x)) { g = g_; }
-  void setGradientFunction(std::function<Eigen::VectorXd(const Eigen::VectorXd& x)> g_) { g = g_; }
+  void setGradientFunction(std::function<Eigen::VectorXd(const Eigen::VectorXd& x)> g_) { g = std::move(g_); }
   void setInitialPoint(const Eigen::VectorXd& x) { x_ = x; }
   void getOptimalPoint(Eigen::VectorXd* x) { *x = x_; }
 
   void setLogPath(const char* path) {
     log_path = const_cast<char*>(path);
-    fp = fopen(log_path, "w");
+    fp = fopen(log_path, "w");  // NOLINT
   }
   void log(const Eigen::VectorXd& x, double f, const Eigen::VectorXd& g, int iter, double t, double c, double sigma);
 
  protected:
+  // NOLINTBEGIN(misc-non-private-member-variables-in-classes)
   OptimizerOptions options_;
   Eigen::VectorXd x_;
   int n = 0;
-  // objective function instance
-  // double (*f)(const Eigen::VectorXd& x);
-  // gradient function instance
-  // Eigen::VectorXd (*g)(const Eigen::VectorXd& x);
 
   // funciton pointer to objective function
   std::function<double(const Eigen::VectorXd& x)> f;
   // function pointer to gradient function
   std::function<Eigen::VectorXd(const Eigen::VectorXd& x)> g;
+  // NOLINTEND(misc-non-private-member-variables-in-classes)
 
  private:
   char* log_path = nullptr;

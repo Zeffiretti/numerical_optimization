@@ -11,16 +11,16 @@
 #include "third_party/eigen/Eigen/Eigen"
 
 void LBFGSOptimizer::updateHessian(const Eigen::VectorXd& s, const Eigen::VectorXd& y) {
-  Eigen::MatrixXd I = Eigen::MatrixXd::Identity(n, n);
-  Eigen::MatrixXd H = I - s * y.transpose() / (y.transpose() * s);
-  Eigen::MatrixXd G = I - y * s.transpose() / (y.transpose() * s);
+  Eigen::MatrixXd const I = Eigen::MatrixXd::Identity(n, n);
+  Eigen::MatrixXd const H = I - s * y.transpose() / (y.transpose() * s);
+  Eigen::MatrixXd const G = I - y * s.transpose() / (y.transpose() * s);
   B = H * B * G + s * s.transpose() / (y.transpose() * s);
 }
 
 void LBFGSOptimizer::optimize() {
   Eigen::VectorXd x = x_;
   auto delta = g(x);
-  double sigma_square = options_.sigma * options_.sigma;
+  double const sigma_square = options_.sigma * options_.sigma;
   size_t iter = 0;
   // initialize B = I
   B = Eigen::MatrixXd::Identity(n, n);
@@ -34,7 +34,7 @@ void LBFGSOptimizer::optimize() {
   RHO.clear();
 
   while (!d.hasNaN() && delta.transpose() * delta > sigma_square) {
-    // update t using Lewis Overton line search: weak Wolfe conditions
+    // update t using Lewis and Overton line search: weak Wolfe conditions
     t = options_.t;
     double lower_bound = 0, upper_bound = INFINITY;
     for (int i = 0; i < 50; ++i) {
@@ -56,9 +56,9 @@ void LBFGSOptimizer::optimize() {
     x = x + t * d;
     // update delta: $\delta_{k+1} = g(x_{k+1})$
     auto delta_new = g(x);
-    // update s, y and rho
+    // update s, y and rho at current point
     Eigen::VectorXd s = t * d;
-    Eigen::VectorXd y = delta_new - delta;
+    Eigen::VectorXd const y = delta_new - delta;
     delta = delta_new;
     double rho = 1 / ((s.transpose() * y));
     if (std::isnan(rho)) {
@@ -90,7 +90,7 @@ void LBFGSOptimizer::optimize() {
     }
     auto gamma = static_cast<double>(S[S.size() - 1].transpose() * Y[S.size() - 1]) /
                  (static_cast<double>(Y[S.size() - 1].transpose() * Y[S.size() - 1]) + 1e-6);
-    Eigen::MatrixXd H0 = gamma * Eigen::MatrixXd::Identity(n, n);
+    Eigen::MatrixXd const H0 = gamma * Eigen::MatrixXd::Identity(n, n);
     Eigen::VectorXd z = H0 * q;
     for (int i = 0; i < S.size(); ++i) {
       auto beta = RHO[i] * Y[i].transpose() * z;

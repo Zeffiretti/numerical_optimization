@@ -18,7 +18,11 @@ class LBFGSOptimizer : public OptimizerBase {
  private:
   void updateHessian(const Eigen::VectorXd& s, const Eigen::VectorXd& y);
   Eigen::MatrixXd B;
+
+  // the number of previous iterations to store
   int m = 10;
+
+  // Lewis and Nocedal method parameters c1 and c2
   double c1 = 1e-4;
   double c2 = 0.9;
 };
