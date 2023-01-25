@@ -1,8 +1,10 @@
 # Numerical Optimization in Robotics
 
-[[toc]]
-
 This repository contains the code for the course "Numerical Optimization in Robotics" at Shenlanxueyuan. All the code is written in C++ and Python, and has been tested on Ubuntu 20.04.
+- [Numerical Optimization in Robotics](#numerical-optimization-in-robotics)
+  * [Compile and Run built-in examples](#compile-and-run-built-in-examples)
+  * [Homework 1 Linear-search Steepest Gradient Descent](#homework-1-linear-search-steepest-gradient-descent)
+  * [Homework 2 Smooth Navigation Path Generation](#homework-2-smooth-navigation-path-generation)
 
 ## Compile and Run built-in examples
 
@@ -12,7 +14,7 @@ This repository contains the code for the course "Numerical Optimization in Robo
 
 The above command will compile the code and run the examples written in coressponding source files. You can also run the examples by yourself, following the instructions below for each homework.
 
-## Homework 1: Linear-search Steepest Gradient Descent
+## Homework 1 Linear-search Steepest Gradient Descent
 
 The executable file is `build/lsgd/lsgd`. To run the program, you have to provide the following arguments:
 1. log file path.
@@ -25,7 +27,7 @@ For example, to run the program with a 10-dimensional problem, you can run the f
 
 The test case of dimension 2 is provided in `scripts/test.sh`. It will be called in `scripts/configure.sh`, write results in `data/lsgd/yyyy-mm-dd-hh-mm-ss.log`, and plot the result in `data/lsgd/yyyy-mm-dd-hh-mm-ss.png`.
 
-## Homework 2: Smooth Navigation Path Generation
+## Homework 2 Smooth Navigation Path Generation
 
 In this problem, two executable files are provided: `build/bfgs/bfgs` and `build/bfgs/path_smoother_node`. The former is used to run the BFGS algorithm to find the optimal point for Rosenbrock function, which acts as a test case for our implementation of BFGS algorithm. You can refer to the instructions of Homework 1 to run the program.
 
